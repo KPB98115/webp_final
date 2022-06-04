@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Button, Container, } from "react-bootstrap";
 import Logo from "./image/Logo.js";
+import Post from "./Post.js";
 
 function Main() {
     return (
         <Container>
             <div id="header">
-                <h1>Fake IG</h1>
+                <div id="web-logo"><h1>Fake IG</h1></div>
                 <div id="search_bar">
                     <img src={Logo.search} alt="search logo" height="25px" width="25px"/>
-                    <input type="text" class="" placeholder="search user"></input>
+                    <input type="text" placeholder="search user"></input>
                 </div>
                 <div id="netvigator">
                     <img src={Logo.homepage} alt="search" height="30px" width="30px"/>
@@ -18,11 +19,17 @@ function Main() {
                 </div>
             </div>
             <hr />
-            
+            <div id="content">
+                <div id="gallery">
+                    <Post />
+                    <Post />
+                </div>
+                <div id="fd-list">
+                    Poor boy you have no friends.
+                </div>
+            </div>
         </Container>
     );
 }
-
-function click() {}
 
 export default Main;

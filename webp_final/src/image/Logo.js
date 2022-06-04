@@ -5,6 +5,7 @@ const Logo = {
     search: require("./search.png"),
     emptyLike: require("./empty-like.png"),
     bigLike: require("./big-like.png"),
+    cgu: require("./cgu_logo.png"),
 }
 
 export default Logo;
