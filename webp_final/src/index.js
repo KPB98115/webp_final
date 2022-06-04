@@ -1,22 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
-import Login from "./Login"
+import Main from './Frontpage';
 import reportWebVitals from './reportWebVitals';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Main />
   </React.StrictMode>
 );
 
-document.getElementById("username").render(
-  <Login />
-)
-
-document.getElementsByTagName("body").render()
+document.getElementsByTagName("root").render()
 
 
 

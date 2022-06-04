@@ -11,3 +11,27 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#search_bar {
+  display: inline;
+  width: 200px;
+  margin: 0 auto;
+  margin-top: 5px;
+}
+
+#search_logo {
+  height: "30px";
+  width: "30px";
+}
+
+#netvigator {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-top: 5px;
+}
+
+#header {
+  display: grid;
+  grid-template-columns: 20% 60% 20%;
+  margin-top: 20px;
+}
