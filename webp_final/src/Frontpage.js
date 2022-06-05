@@ -4,6 +4,11 @@ import Logo from "./image/Logo.js";
 import Post from "./Post.js";
 
 function Main() {
+
+    //const post = 
+
+    const [post, setPost] = useState(<Post />);
+
     return (
         <Container>
             <div id="header">
@@ -21,7 +26,7 @@ function Main() {
             <hr />
             <div id="content">
                 <div id="gallery">
-                    <Post />
+                    {post}
                 </div>
                 <div id="fd-list">
                     Poor boy you have no friends.

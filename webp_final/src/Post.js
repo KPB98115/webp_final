@@ -18,12 +18,20 @@ function CommentSection() {
     //從這裡 upload使用者名稱及留言到 Back End
     const submitComment = (e) => {
         var userInput = e.currentTarget.parentElement.querySelector("input").value;
-        setComment(userInput);
+
+        if (userInput !== "") {
+            e.currentTarget.blur();
+            return setComment(userInput);
+        }
+        else console.log("Can not reply empty string comment.");
+        
+        e.currentTarget.blur();
+        
+        return;
         /**
         從瀏覽器的 Local Storge中存取目前使用者的 Session ID
         uploadComment(author, comment, timestamp)
          */
-        e.currentTarget.blur();
     };
     /**這個 function用來展示從 DB中存取的使用者名稱及留言紀錄
     const showComment = () => {
@@ -51,9 +59,10 @@ class Post extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
+            user: "root", 
             status: false, 
             amount: 0, 
-            image: <img src={Logo.emptyLike} alt="like logo" height="50px" width="50px"/>
+            image: <img src={Logo.emptyLike} alt="like logo" height="50px" width="50px"/> //src should be a url
         };
         this.clickLike = this.clickLike.bind(this);
     }
@@ -79,6 +88,7 @@ class Post extends React.Component {
     render() {
         return (
             <div className="gallery-post">
+                <div id="post-username">{this.state.user}</div>
                 <div id="post-image"><img src={Logo.cgu} alt="cgu logo"/></div>
                 <div id="post-props">
                     <div id="post-score">
