@@ -22,7 +22,6 @@ function Main() {
             <div id="content">
                 <div id="gallery">
                     <Post />
-                    <Post />
                 </div>
                 <div id="fd-list">
                     Poor boy you have no friends.
