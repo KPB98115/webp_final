@@ -1,19 +1,32 @@
 import { useState, useEffect } from "react";
+import { getAuth, signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
+import { Button } from "bootstrap";
 
 function LoginForm() {
-    const [username, setUsername] = useState("");
-    const [password, setPW] = useState("");
-    const [login_btn, setBtn] = useState(document.getElementById("btn"));
 
-    const login = () => {
-        setUsername("abc");
-        
-    }
-    useEffect(() => {
-        
-    }, [username])
+    async function googleAuth() {
+        const provider = new GoogleAuthProvider();
+
+        try {
+            const auth = getAuth();
+            
+            await signInWithRedirect(auth, provider);
+            auth.onAuthStateChanged(user => {
+                if(user) {
+                    //signed in
+                    document.getElementById("logout_btn").hidden = false;
+                } else {
+                    //not signed in
+                }
+            });
+        }catch(err) {
+
+        }
+    };
     
-    return <h1>user</h1>
+    return (
+        <Button variant="outline-Light" onClick={googleAuth}>Log-in</Button>
+    );
 }
 
-export {LoginForm};
+export default LoginForm;

@@ -1,59 +1,121 @@
 // Import the functions you need from the SDKs you need
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
+//import { initializeApp } from "firebase/app";
+import { app } from "./firebaseInit";
+import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, getDoc, getDocs, serverTimestamp, arrayUnion, Timestamp, query } from "firebase/firestore";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 
-import { getStorage, ref, uploadBytes } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD8FMwdJF58Nj0GHbBN4oAEjC-ztp-td1I",
-  authDomain: "webp-final-5e5d5.firebaseapp.com",
-  projectId: "webp-final-5e5d5",
-  databaseURL: "gs://webp-final-5e5d5.appspot.com",
-  storageBucket: "webp-final-5e5d5.appspot.com",
-  messagingSenderId: "868651144863",
-  appId: "1:868651144863:web:7999f70774f598efe4f4aa"
-};
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
+//const app = initializeApp(firebaseConfig);
 
-const firestore = app.firestore();
+const db = getFirestore(app);
 
-const storage = app.getStorage();
+const storage = getStorage(app);
 
-const imageDict = ref(storage, "webp_final/image");
-
-
-function register(username, password) {
-    var data = {
-        username: username,
-        password: password
-    };
-    firestore.collection("ACL").doc("user").set(data).then(() => {
-        console.log("New member "+"username"+" register successfully.")
-    }).catch(error => {
+async function register(username, userID) {
+    try {
+        await setDoc(doc(db, "ACL", username), {
+            userID: userID,
+            lastOnline: serverTimestamp()
+        });
+        console.log("New user register successfully, userID : ", userID);
+        return userID;
+    } catch (error) {
         console.log(error);
-    });
+    }
 }
 
 function uploadIMG(filename, img) {
-    uploadBytes(imageDict, img).then(snapshot => {
-        console.log("image upload successfully.");
-        console.log(snapshot);
-    });
-    return "gs://webp-final-5e5d5.appspot.com/webp_final/image/"+filename;
+    const imageDict = ref(storage, `webp_final/image/${filename}`);
+
+    try {
+        const uploadTask = uploadBytesResumable(imageDict, img, {contentType: "image/jpg"});
+
+        uploadTask.on("state_changed", (snapshot) => {
+            console.log("拍攝此快照時已傳輸的總字節數: "+snapshot.bytesTransferred);
+            console.log("預計上傳的總字節數: "+snapshot.totalBytes);
+        }, (error) => {
+            console.log(error);
+        });
+        return getDownloadURL(uploadTask.snapshot.ref); //return a callback function
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-function newPost(username, img, caption, timestamp) {
-    const url = uploadIMG(username, img);
-    firebase.collection("gallery").doc("post").update({
-        "username": username,
-        "img_URL": url,
-        "caption": caption,
-        "timestamp": timestamp
-    });
+async function newPost(username, filename, img, caption) {
+    console.log("query started.");
+    try {
+        const url = await uploadIMG(filename, img); //since it's a callback function, use await to retrieve the url
+        console.log("image uploaded.", url);
+
+        const docRef = await addDoc(collection(db, "post"), {
+            username: username,
+            img_URL: url,
+            like_amount: 0,
+            comments: {},
+            caption: caption,
+            timestamp: serverTimestamp()
+        });
+        console.log("New post create successfully, post id: "+docRef.id);
+        return docRef.id; //return dec.id as postID
+    } catch (error) {
+        console.log(error);
+    }
 }
+
+async function commentReply(username, comment, postID) {
+    const timestamp = Timestamp.now();
+    try {
+        await updateDoc(doc(db, "post", postID), {
+            comments: arrayUnion({
+                comment: comment,
+                username: username,
+                timestamp: timestamp
+            })
+        })
+        console.log("comment reply successfully.");
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function getPostInfo(postID) {
+    const postSnap = await getDoc(doc(db, "post", postID));
+    if (postSnap.exists()) {
+        console.log("Document data:", postSnap.data());
+        return postSnap.data();
+    } else {
+        console.log("No such document!");
+        return null;
+    }
+}
+
+async function getUserInfo(username) {
+    const userRef = doc(collection(db, "ACL", username));
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+        console.log("Document data:", userSnap.data());
+        return userSnap.data();
+      } else {
+        console.log("No such document!");
+        return null;
+      }
+}
+
+async function getPostAmount() {
+    const postSnap = await getDocs(collection(db, "post"));
+    
+    var posts = [];
+    postSnap.forEach(doc => {
+        posts.push(doc.id);
+    })
+    return posts;
+}
+
+export { register, uploadIMG, newPost, commentReply, getPostInfo, getUserInfo, getPostAmount };

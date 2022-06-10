@@ -2,6 +2,7 @@ import React from "react";
 import {useState, useEffect} from "react";
 import { Button, } from "react-bootstrap";
 import Logo from "./image/Logo.js";
+import * as firebase from "./firebase.js";
 
 /**
  * fetch data from API and assign to a globle variable

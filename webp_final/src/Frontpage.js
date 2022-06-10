@@ -1,32 +1,46 @@
-import { useState } from "react";
-import { Button, Container, } from "react-bootstrap";
+import { Container, } from "react-bootstrap";
 import Logo from "./image/Logo.js";
 import Post from "./Post.js";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import * as firebase from "./firebase.js";
+import { useState } from "react";
+import { async } from "@firebase/util";
+
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+    try {
+        const displayname = user.displayName;
+        const username = user.email;
+        const userID = user.uid;
+
+        
+        //firebase.register(username, userID);
+        //firebase.newPost(username, "test3", Logo.cgu, "test");
+        //firebase.commentReply(username, "hello world", "zjYWRuzKavBlNXm7YMZs");
+        //firebase.getPostInfo("zjYWRuzKavBlNXm7YMZs"); //It return firestore timestamp object, use toDate to convert to JS Data object.
+    } catch (error) {
+        console.log("user has no longer logged-in", error);
+    }
+    
+});
+
+
 
 function Main() {
 
-    //const post = 
+    const [postAmount, setPostAmount] = useState(0);
 
-    const [post, setPost] = useState(<Post />);
-
+    firebase.getPostAmount().then(value => {
+        return ;
+    })
+    
+    
     return (
         <Container>
-            <div id="header">
-                <div id="web-logo"><h1>Fake IG</h1></div>
-                <div id="search_bar">
-                    <img src={Logo.search} alt="search logo" height="25px" width="25px"/>
-                    <input type="text" placeholder="search user"></input>
-                </div>
-                <div id="netvigator">
-                    <img src={Logo.homepage} alt="search" height="30px" width="30px"/>
-                    <img src={Logo.newPost} alt="search" height="30px" width="30px"/>
-                    <img src={Logo.profile} alt="search" height="30px" width="30px"/>
-                </div>
-            </div>
-            <hr />
             <div id="content">
                 <div id="gallery">
-                    {post}
+                    {postAmount}
+                    <Post />
                 </div>
                 <div id="fd-list">
                     Poor boy you have no friends.

@@ -2,17 +2,41 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Main from './Frontpage';
+import Netvigator from "./Netvigator";
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { app } from './firebaseInit';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-import { HashRouter, Route, Switch } from 'react-router-dom';
+
+// Initialize Firebase
+const auth = getAuth(app);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <Main />
-  </React.StrictMode>
-);
+
+try {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      root.render(
+        <React.StrictMode>
+            <Netvigator auth={true}/>
+            <Main />
+        </React.StrictMode>
+      )
+    } else {
+      root.render(
+        <React.StrictMode>
+          <Netvigator auth={false}/>
+          
+        </React.StrictMode>
+      )
+    }
+  })
+
+
+} catch (error) {
+  console.log(error);
+}
 
 document.getElementsByTagName("root").render()
 
