@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 //import { initializeApp } from "firebase/app";
 import { app } from "./firebaseInit";
-import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, getDoc, getDocs, serverTimestamp, arrayUnion, Timestamp, query } from "firebase/firestore";
+import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, getDoc, getDocs, serverTimestamp, arrayUnion, Timestamp, query, deleteDoc } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -62,9 +62,20 @@ async function newPost(username, filename, img, caption) {
             timestamp: serverTimestamp()
         });
         console.log("New post create successfully, post id: "+docRef.id);
-        return docRef.id; //return dec.id as postID
+        return [docRef.id, url]; //return dec.id and image url as an array
     } catch (error) {
         console.log(error);
+        return false;
+    }
+}
+
+function deletePost(postID) {
+    try {
+        const response = deleteDoc(doc(db, "post", postID));
+        console.log(response);
+    }
+    catch(e) {
+        console.log(e);
     }
 }
 
@@ -118,4 +129,14 @@ async function getPostAmount() {
     return posts;
 }
 
-export { register, uploadIMG, newPost, commentReply, getPostInfo, getUserInfo, getPostAmount };
+async function getUserAmount() {
+    const amount = await getDocs(collection(db, "ACL"));
+
+    var users = [];
+    amount.forEach((doc) => {
+        users.push(doc.metadata);
+    });
+    return users;
+}
+
+export { register, uploadIMG, newPost, deletePost, commentReply, getPostInfo, getUserInfo, getPostAmount, getUserAmount };

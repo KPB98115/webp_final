@@ -10,10 +10,10 @@ import * as firebase from "./firebase.js";
  * post_info => { "1":{ "username":"peter", "comment":"text", "timestamp","00:00:00 dd/mm/yyyy" }, "2":{}, "3":{}, ...}
  */
 
-function CommentSection() {
+function CommentSection(props) {
     //目前改變 author & comment的狀態只是示範用，之後會改成 upload使用者名稱及留言到 Back End
-    const [author, setAuthor] = useState("user");
-    const [comment, setComment] = useState("Hello World");
+    const [author, setAuthor] = useState(props.author);
+    const [comment, setComment] = useState(props.comment);
     const [timestamp, setTimestamp] = useState(new Date());
 
     //從這裡 upload使用者名稱及留言到 Back End
@@ -29,10 +29,6 @@ function CommentSection() {
         e.currentTarget.blur();
         
         return;
-        /**
-        從瀏覽器的 Local Storge中存取目前使用者的 Session ID
-        uploadComment(author, comment, timestamp)
-         */
     };
     /**這個 function用來展示從 DB中存取的使用者名稱及留言紀錄
     const showComment = () => {
@@ -60,6 +56,8 @@ class Post extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
+            postID: props.postid,
+            sequence: props.seq,
             user: "root", 
             status: false, 
             amount: 0, 
@@ -83,7 +81,22 @@ class Post extends React.Component {
                 image: <img src={Logo.emptyLike} alt="like logo" height="50px" width="50px"/>
             });
         }
+        console.log(this.props.postID, this.props.seq);
         e.currentTarget.blur();
+    }
+
+    /**
+    componentDidMount() {
+        this.timerID = setInterval(
+            () => this.updatePostProps(),
+            100000
+        );
+    }
+     */
+
+    updatePostProps() {
+        //const snapshot =  firebase.getPostInfo(this.state.postID); //return post snapshot data
+        
     }
 
     render() {
@@ -103,7 +116,7 @@ class Post extends React.Component {
                         </div>
                     </div>
                     <div id="post-comment">
-                        <CommentSection />
+                        <CommentSection author={""} comment={""} />
                     </div>
                 </div>
             </div>

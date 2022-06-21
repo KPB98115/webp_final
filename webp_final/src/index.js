@@ -19,14 +19,15 @@ try {
     if (user) {
       root.render(
         <React.StrictMode>
-            <Netvigator auth={true}/>
+            <Netvigator auth={true} user={user}/>
             <Main />
         </React.StrictMode>
       )
     } else {
+      //console.log("cant login.");
       root.render(
         <React.StrictMode>
-          <Netvigator auth={false}/>
+          <Netvigator auth={false} user={false}/>
           
         </React.StrictMode>
       )
